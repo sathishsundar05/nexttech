@@ -15,3 +15,13 @@ bun dev
 ```
 
 Table get API: https://jsonplaceholder.typicode.com/posts
+
+Reference: https://primevue.org/datatable/#customers
+
+Table headers: User id, Title, body, Action
+
+Action -> Dropdown -> Update, Delete
+
+Update -> Dialog -> prefill -> title - textfield, body - textarea
+
+Delete - confirmation Dialog 
