@@ -14,14 +14,50 @@ pnpm dev
 bun dev
 ```
 
-Table get API: https://jsonplaceholder.typicode.com/posts
+Add Vendors: (POST)
 
-Reference: https://primevue.org/datatable/#customers
+https://workfreaks.xyz/App/api.php
+{
+"gofor" : "addvendors",
+"email" : "sivabe13@gmail.com",
+"mobileno" : "7373266644",
+"vendor_name" : "Siva Chandran",
+"company_name" : "TEA",
+"country" : "India",
+"note" : "Very Best Vendor",
+"vendor_type" : "Lens"
+}
 
-Table headers: User id, Title, body, Action
 
-Action -> Dropdown -> Update, Delete
+Edit Vendors: (POST)
 
-Update -> Dialog -> prefill -> title - textfield, body - textarea
+https://workfreaks.xyz/App/api.php
+{
+"gofor" : "editvendors",
+"vendor_id" : "1",
+"email" : "sivabe13@gmail.com",
+"mobileno" : "7373266644",
+"vendor_name" : "Siva Chandran",
+"company_name" : "TEA",
+"country" : "India",
+"note" : "Very Best Vendor",
+"vendor_type" : "Lens"
+}
 
-Delete - confirmation Dialog 
+Delete Vendor:
+https://workfreaks.xyz/App/api.php?gofor=vendorsdelete&vendor_id=1
+
+Get Vendor:
+https://workfreaks.xyz/App/api.php?gofor=vendorssingle&vendor_id=1
+
+View Vendors:
+https://workfreaks.xyz/App/api.php?gofor=vendorslist
+
+
+https://workfreaks.xyz/App/api.php
+
+
+{  
+"gofor" : " candidates_photo_upload ",
+"imgname" : " base64",
+}
