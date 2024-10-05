@@ -1,19 +1,30 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Navbar from "../components/navbar";
+import TableDemo from "@/components/table-demo"
 
 const DashboardPage = () => {
   const router = useRouter();
+  const [vendors, setVendors] = useState([]);
 
-  // mounting
+  const fetchVendors = async () => {
+    try {
+      const response = await fetch('https://workfreaks.xyz/App/api.php?gofor=vendorslist');
+      const data = await response.json();
+      setVendors(data);
+    } catch (err) {
+      console.error("Error fetching vendors:", err);
+    }
+  };
+
   useEffect(() => {
     const check = sessionStorage.getItem("userLoggedin");
 
     if (check === "true") {
-      // alert("User already loggedin");
+      fetchVendors();
     } else {
       router.push("/");
     }
@@ -35,7 +46,10 @@ const DashboardPage = () => {
                 Logout
               </Button>
             </div>
-            <div className="page-content"></div>
+           <div className="page-content">
+            <h2 className="pb-3 font-bold">Vendor List</h2>
+            {vendors && (<TableDemo vendors={vendors}></TableDemo>)}
+            </div>
           </div>
         </div>
       )}
