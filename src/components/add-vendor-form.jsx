@@ -27,19 +27,19 @@ const vendorSchema = z.object({
   note: z.string().min(2, "Note must be at least 2 characters")
 });
 
-export default function AddVendorForm() {
+export default function AddVendorForm({prefillData}) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(vendorSchema),
     defaultValues: {
-      vendor_name: "",
-      mobileno: "",
-      email: "",
-      vendor_type: "",
-      company_name: "",
-      country: ""
+      vendor_name: prefillData?.vendor_name,
+      mobileno: prefillData?.mobileno,
+      email: prefillData?.email,
+      vendor_type: prefillData?.vendor_type,
+      company_name: prefillData?.company_name,
+      country: prefillData?.country
     },
     onSubmit: () => {
       alert();
@@ -49,7 +49,12 @@ export default function AddVendorForm() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      data.gofor = "addvendors";
+      data.gofor = prefillData ? "editvendors" : "addvendors";
+
+      if (prefillData && prefillData.vendor_id) {
+        data.vendor_id = prefillData.vendor_id;
+      }
+
       const response = await axios.post(
         "https://workfreaks.xyz/App/api.php",
         data
@@ -81,7 +86,10 @@ export default function AddVendorForm() {
       });
     }
   };
-
+  
+  const getButtonName = () => {
+    return prefillData ? "Update Vendor" : "Add Vendor"
+  }
   return (
     <div className="max-w-md mx-auto mt-8">
       <div className="flex justify-end">
@@ -93,7 +101,8 @@ export default function AddVendorForm() {
           back
         </Button>
       </div>
-      <h1 className="text-2xl font-bold mb-4">Add Vendor</h1>
+      {!prefillData && (<h1 className="text-2xl font-bold mb-4">Add Vendor</h1>)}
+      {prefillData && (<h1 className="text-2xl font-bold mb-4">Update Vendor</h1>)}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -194,7 +203,7 @@ export default function AddVendorForm() {
             )}
           />
           <Button type="submit">
-            {isSubmitting ? "Submitting..." : "Add Vendor"}
+            {isSubmitting ? "Submitting..." : getButtonName()}
           </Button>
         </form>
       </Form>

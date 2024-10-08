@@ -19,9 +19,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation";
+
 
 export default function TableDemo({ vendors }) {
+  const router = useRouter();
+const redirect = (id) => {
+  router.push(`/dashboard/updatevendor/${id}`);
+}
+      
   return (
+
     <Table>
       <TableHeader>
         <TableRow>
@@ -43,7 +51,7 @@ export default function TableDemo({ vendors }) {
             <DropdownMenu>
               <DropdownMenuTrigger><EllipsisVertical></EllipsisVertical></DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>Update</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => redirect(vendor.vendor_id)} >Update  </DropdownMenuItem>
                 <DropdownMenuItem>Delete</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
