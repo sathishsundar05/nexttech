@@ -1,9 +1,8 @@
-import LoginComponent from "@/app/components/login"
+'use client'
+import {PostsTable} from "@/components/posts-table"
 
-export default function Home() {
+export default function pagePostsTable() {
   return (
-    <div className="main">
-      <LoginComponent />
-    </div>
-  );
+    <PostsTable/>
+  )
 }
