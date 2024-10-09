@@ -16,7 +16,6 @@ const DashboardPage = () => {
       const response = await axios.get(
         "https://workfreaks.xyz/App/api.php?gofor=vendorslist"
       );
-
       setVendors(response.data);
     } catch (err) {
       console.error("Error fetching vendors:", err);
@@ -25,6 +24,10 @@ const DashboardPage = () => {
 
   const handleAddVendor = () => {
     router.push("/dashboard/addvendor");
+  };
+
+  const handleDeleteVendor = (vendorId) => {
+    setVendors(vendors.filter((vendor) => vendor.id !== vendorId));
   };
 
   useEffect(() => {
@@ -41,10 +44,12 @@ const DashboardPage = () => {
     <div>
       {sessionStorage.getItem("userLoggedin") === "true" && (
         <div className="flex">
-          <Navbar></Navbar>
+          <Navbar />
           <div className="w-full p-4">
             <div className="flex justify-end">
-              <Button onClick={handleAddVendor} className="mr-3">Add Vendor</Button>
+              <Button onClick={handleAddVendor} className="mr-3">
+                Add Vendor
+              </Button>
               <Button
                 onClick={() => {
                   sessionStorage.setItem("userLoggedin", false);
@@ -56,7 +61,9 @@ const DashboardPage = () => {
             </div>
             <div className="page-content">
               <h2 className="pb-3 font-bold">Vendor List</h2>
-              {vendors && <TableDemo vendors={vendors}></TableDemo>}
+              {vendors && (
+                <TableDemo vendors={vendors} onDelete={handleDeleteVendor} />
+              )}
             </div>
           </div>
         </div>

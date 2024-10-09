@@ -17,6 +17,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
 
+// Validation schema for the form using Zod
 const vendorSchema = z.object({
   vendor_name: z.string().min(2, "Vendor name must be at least 2 characters"),
   mobileno: z.string().regex(/^\d{10}$/, "Mobile number must be 10 digits"),
@@ -27,10 +28,11 @@ const vendorSchema = z.object({
   note: z.string().min(2, "Note must be at least 2 characters")
 });
 
-export default function AddVendorForm({prefillData}) {
+export default function AddVendorForm({ prefillData }) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);  // State to track form submission
 
+  // Initialize form with validation resolver and default values
   const form = useForm({
     resolver: zodResolver(vendorSchema),
     defaultValues: {
@@ -39,22 +41,23 @@ export default function AddVendorForm({prefillData}) {
       email: prefillData?.email,
       vendor_type: prefillData?.vendor_type,
       company_name: prefillData?.company_name,
-      country: prefillData?.country
-    },
-    onSubmit: () => {
-      alert();
+      country: prefillData?.country,
+      note: prefillData?.note || "" // Include the note field in default values
     }
   });
 
+  // Submit handler for form submission
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
+    setIsSubmitting(true);  // Set submitting state
     try {
+      // Determine if the API is for adding or updating vendors
       data.gofor = prefillData ? "editvendors" : "addvendors";
 
       if (prefillData && prefillData.vendor_id) {
-        data.vendor_id = prefillData.vendor_id;
+        data.vendor_id = prefillData.vendor_id; // Include vendor ID if updating
       }
 
+      // Post form data to the backend API
       const response = await axios.post(
         "https://workfreaks.xyz/App/api.php",
         data
@@ -62,50 +65,72 @@ export default function AddVendorForm({prefillData}) {
 
       if (response.data.response === "Vendor Inserted") {
         toast({
-          title: response.data.response,
-          description: "The vendor has been successfully added."
+          title: "Success",
+          description: "The vendor has been successfully added.",
+          variant: "default"
         });
-
         setTimeout(() => {
-            router.push("/dashboard");
-        }, 3000)
-      }
-
-      if (response.data.response === "Vendor Already Exists") {
+          router.push("/dashboard");  // Redirect to dashboard after success
+        }, 3000);
+      } else if (response.data.response === "Vendor Already Exists") {
         toast({
-          title: response.data.response,
-          description: "The vendor already exists"
+          title: "Vendor Exists",
+          description: "The vendor already exists.",
+          variant: "warning"
         });
+      } else {
+        // Unexpected response case
+        throw new Error("Unexpected response from the server");
       }
     } catch (error) {
-      console.error("Error submitting vendor data:", error);
+      // Handle error and display toast notification with details
+      let errorMessage = "Failed to add vendor. Please try again.";
+      if (error.response) {
+        // If the API responded with an error, show the API's message
+        errorMessage = `API Error: ${error.response.data.message}`;
+      } else if (error.request) {
+        // If no response was received, it might be a network error
+        errorMessage = "Network Error: No response from the server.";
+      } else {
+        // Other errors
+        errorMessage = `Error: ${error.message}`;
+      }
+
       toast({
         title: "Error",
-        description: "Failed to add vendor. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);  // Reset submitting state
     }
   };
-  
+
+  // Function to dynamically change the button text based on the action
   const getButtonName = () => {
-    return prefillData ? "Update Vendor" : "Add Vendor"
-  }
+    return prefillData ? "Update Vendor" : "Add Vendor";
+  };
+
   return (
-    <div className="max-w-md mx-auto mt-8">
+    <div className="max-w-md mx-auto my-8"> {/* Added margin for top and bottom spacing */}
       <div className="flex justify-end">
         <Button
           onClick={() => {
-            router.push("/dashboard");
+            router.push("/dashboard");  // Navigate back to dashboard
           }}
         >
-          back
+          Back
         </Button>
       </div>
-      {!prefillData && (<h1 className="text-2xl font-bold mb-4">Add Vendor</h1>)}
-      {prefillData && (<h1 className="text-2xl font-bold mb-4">Update Vendor</h1>)}
 
+      <h1 className="text-2xl font-bold mb-2">
+        {prefillData ? "Update Vendor" : "Add Vendor"}
+      </h1>
+
+      {/* Form component */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Vendor Name Field */}
           <FormField
             control={form.control}
             name="vendor_name"
@@ -119,6 +144,7 @@ export default function AddVendorForm({prefillData}) {
               </FormItem>
             )}
           />
+          {/* Mobile Number Field */}
           <FormField
             control={form.control}
             name="mobileno"
@@ -132,6 +158,7 @@ export default function AddVendorForm({prefillData}) {
               </FormItem>
             )}
           />
+          {/* Email Field */}
           <FormField
             control={form.control}
             name="email"
@@ -149,6 +176,7 @@ export default function AddVendorForm({prefillData}) {
               </FormItem>
             )}
           />
+          {/* Vendor Type Field */}
           <FormField
             control={form.control}
             name="vendor_type"
@@ -162,6 +190,7 @@ export default function AddVendorForm({prefillData}) {
               </FormItem>
             )}
           />
+          {/* Company Name Field */}
           <FormField
             control={form.control}
             name="company_name"
@@ -175,6 +204,7 @@ export default function AddVendorForm({prefillData}) {
               </FormItem>
             )}
           />
+          {/* Country Field */}
           <FormField
             control={form.control}
             name="country"
@@ -188,7 +218,7 @@ export default function AddVendorForm({prefillData}) {
               </FormItem>
             )}
           />
-
+          {/* Note Field */}
           <FormField
             control={form.control}
             name="note"
@@ -202,9 +232,13 @@ export default function AddVendorForm({prefillData}) {
               </FormItem>
             )}
           />
-          <Button type="submit">
-            {isSubmitting ? "Submitting..." : getButtonName()}
-          </Button>
+
+          {/* Submit Button */}
+          <div className="flex justify-end mb-8">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : getButtonName()}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
