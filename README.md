@@ -53,11 +53,9 @@ https://workfreaks.xyz/App/api.php?gofor=vendorssingle&vendor_id=1
 View Vendors:
 https://workfreaks.xyz/App/api.php?gofor=vendorslist
 
-
+Image upload:
 https://workfreaks.xyz/App/api.php
-
-
 {  
-"gofor" : " candidates_photo_upload ",
-"imgname" : " base64",
+"gofor" : "candidates_photo_upload",
+"imgname" : "base64",
 }
